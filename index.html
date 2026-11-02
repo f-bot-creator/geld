@@ -148,13 +148,26 @@ label.f{display:block;color:var(--muted);font-size:13px;font-weight:600;margin:1
 .sectiontitle{display:flex;justify-content:space-between;align-items:center;margin:20px 4px 0;color:var(--muted);font-size:13px;font-weight:650;text-transform:uppercase;letter-spacing:.06em}
 .toast{position:absolute;left:50%;top:calc(var(--sat) + 14px);z-index:60;transform:translate3d(-50%,-80px,0);background:var(--text);color:#0c0e12;font-weight:700;padding:10px 18px;border-radius:999px;transition:transform .3s cubic-bezier(.2,.8,.2,1);pointer-events:none;font-size:14px;white-space:nowrap;max-width:calc(100% - 32px);overflow:hidden;text-overflow:ellipsis}
 .toast.show{transform:translate3d(-50%,0,0)}
+.hdrr{display:flex;align-items:center;gap:2px;min-width:0}
+.hdrr .sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-right:2px}
+.samplebadge{font-size:11.5px;font-weight:700;color:#ffd98a;background:#ffca3a1f;border:1px solid #ffca3a55;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.sync.spin svg{animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.syncdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--good)}
+.syncdot.warn{background:var(--warn)}.syncdot.err{background:var(--bad)}
+.ptr{position:absolute;left:50%;top:calc(var(--sat) + 96px);z-index:6;width:36px;height:36px;margin-left:-18px;border-radius:50%;background:var(--card2);border:1px solid var(--line);display:grid;place-items:center;opacity:0;transform:translate3d(0,-30px,0) rotate(0deg);pointer-events:none}
+.ptr.go svg{animation:spin .9s linear infinite}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:8px 2px;font-size:14px;border-top:1px solid var(--line)}
+.kv:first-child{border-top:0}.kv span:first-child{color:var(--muted)}.kv span:last-child{text-align:right;min-width:0;overflow-wrap:anywhere}
+.stline{font-size:13.5px;margin-top:10px;min-height:20px}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <header class="top">
-    <div class="brand"><h1><span class="dot"></span>Geld</h1><span class="sub" id="subtitle"></span></div>
+    <div class="brand"><h1><span class="dot"></span>Geld</h1><div class="hdrr"><span class="sub" id="subtitle"></span><button class="iconbtn sync" id="syncBtn" aria-label="Sync now" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4.5L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.5 4.5L20 16"/><path d="M20 21v-5h-5"/></svg></button><button class="iconbtn" id="gearBtn" aria-label="Sync settings"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div></div>
     <div class="periodbar" id="periodbar">
       <div class="seg" role="tablist" aria-label="Period">
         <button data-p="day">Daily</button><button data-p="week">Weekly</button><button data-p="month">Monthly</button>
@@ -166,6 +179,7 @@ label.f{display:block;color:var(--muted);font-size:13px;font-weight:600;margin:1
       </div>
     </div>
   </header>
+  <div class="ptr" id="ptr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-3-6.2"/></svg></div>
   <main class="scroller" id="main"></main>
   <button class="fab" id="fab" aria-label="Add transaction"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
   <nav class="tabs"><div class="tabsin" id="tabs"></div></nav>
@@ -181,27 +195,33 @@ const CONFIG = {
   THOUSANDS_SEP: '\u00A0',      // non-breaking space → "R 7 608"
   DECIMAL_SEP: '.',
   WEEK_STARTS_MONDAY: true,
-  STORAGE_KEYS: { categories: 'geld.categories.v1', userTx: 'geld.userTx.v1' }
+  STORAGE_KEYS: { categories: 'geld.categories.v1', userTx: 'geld.userTx.v1',
+                  sync: 'geld.sync.v1', cache: 'geld.cache.v1', queue: 'geld.queue.v1' },
+  // Private cloud store (Cloudflare Worker "geld-api"). URL + key are entered once in Settings (gear icon).
+  API_URL_DEFAULT: 'https://geld-api.benedict-webster.workers.dev'
 };
 const PALETTE = ['#7C6CFF','#2EC4B6','#FF9F1C','#FF5D8F','#3A86FF','#8AC926','#FFCA3A','#C77DFF','#06D6A0','#EF476F','#4CC9F0','#F4A261','#B5838D','#90A4AE'];
 const EMOJIS = ['🏠','🛒','🍔','☕','🍕','🍷','🚗','⛽','🚌','✈️','💡','💧','📱','🌐','💊','🏥','💪','🎬','🎮','🎵','📚','🎓','🛍️','👕','💇','🧹','🐶','👶','🎁','🔁','🧾','🏦','💼','🧑‍💻','💸','📈','📦','⚽','🌿','❓'];
 
 /* ===================== DEFAULT CATEGORIES ===================== */
-// limit = monthly budget in rands (0 = no limit). kind decides where it shows in the add sheet.
+// limit = monthly budget in rands (0 = no limit). type ('expense'|'income') decides where it shows.
 const DEFAULT_CATEGORIES = [
-  { id:'housing',   name:'Housing',       icon:'🏠', color:'#7C6CFF', limit:10000, kind:'expense' },
-  { id:'groceries', name:'Groceries',     icon:'🛒', color:'#2EC4B6', limit:5000,  kind:'expense' },
-  { id:'eating',    name:'Eating out',    icon:'🍔', color:'#FF9F1C', limit:2000,  kind:'expense' },
-  { id:'transport', name:'Transport',     icon:'⛽', color:'#3A86FF', limit:3000,  kind:'expense' },
-  { id:'utilities', name:'Utilities',     icon:'💡', color:'#FFCA3A', limit:2500,  kind:'expense' },
-  { id:'phone',     name:'Airtime & data',icon:'📱', color:'#4CC9F0', limit:400,   kind:'expense' },
-  { id:'health',    name:'Health',        icon:'💊', color:'#06D6A0', limit:1200,  kind:'expense' },
-  { id:'fun',       name:'Entertainment', icon:'🎬', color:'#FF5D8F', limit:1000,  kind:'expense' },
-  { id:'shopping',  name:'Shopping',      icon:'🛍️', color:'#C77DFF', limit:1500,  kind:'expense' },
-  { id:'subs',      name:'Subscriptions', icon:'🔁', color:'#F4A261', limit:500,   kind:'expense' },
-  { id:'salary',    name:'Salary',        icon:'💼', color:'#8AC926', limit:0,     kind:'income'  },
-  { id:'freelance', name:'Freelance',     icon:'🧑‍💻', color:'#06D6A0', limit:0,   kind:'income'  },
-  { id:'uncat',     name:'Uncategorised', icon:'❓', color:'#90A4AE', limit:0,     kind:'expense', locked:true }
+  { id:'housing',   name:'Housing',       icon:'🏠', color:'#7C6CFF', limit:10000, type:'expense' },
+  { id:'groceries', name:'Groceries',     icon:'🛒', color:'#2EC4B6', limit:5000,  type:'expense' },
+  { id:'eating',    name:'Eating out',    icon:'🍔', color:'#FF9F1C', limit:2000,  type:'expense' },
+  { id:'transport', name:'Transport',     icon:'⛽', color:'#3A86FF', limit:3000,  type:'expense' },
+  { id:'utilities', name:'Utilities',     icon:'💡', color:'#FFCA3A', limit:2500,  type:'expense' },
+  { id:'phone',     name:'Airtime & data',icon:'📱', color:'#4CC9F0', limit:400,   type:'expense' },
+  { id:'health',    name:'Health',        icon:'💊', color:'#06D6A0', limit:1200,  type:'expense' },
+  { id:'fun',       name:'Entertainment', icon:'🎬', color:'#FF5D8F', limit:1000,  type:'expense' },
+  { id:'shopping',  name:'Shopping',      icon:'🛍️', color:'#C77DFF', limit:1500,  type:'expense' },
+  { id:'subs',      name:'Subscriptions', icon:'🔁', color:'#F4A261', limit:500,   type:'expense' },
+  { id:'uncat',     name:'Uncategorised', icon:'❓', color:'#90A4AE', limit:0,     type:'expense', locked:true },
+  { id:'salary',    name:'Salary',        icon:'💼', color:'#8AC926', limit:0,     type:'income'  },
+  { id:'freelance', name:'Freelance',     icon:'🧑‍💻', color:'#06D6A0', limit:0,   type:'income'  },
+  { id:'interest',  name:'Interest',      icon:'🏦', color:'#4CC9F0', limit:0,     type:'income'  },
+  { id:'gifts',     name:'Gifts',         icon:'🎁', color:'#FF5D8F', limit:0,     type:'income'  },
+  { id:'other_income', name:'Other income', icon:'💰', color:'#FFCA3A', limit:0,  type:'income', locked:true }
 ];
 
 /* ============================================================================
@@ -261,16 +281,43 @@ const store = {
   get(k, f){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : f; }catch(e){ return f; } },
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 };
-let categories = store.get(CONFIG.STORAGE_KEYS.categories, null) || clone(DEFAULT_CATEGORIES);
-let userTx = store.get(CONFIG.STORAGE_KEYS.userTx, []);
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
-function saveCats(){ store.set(CONFIG.STORAGE_KEYS.categories, categories); }
+// Normalise categories from storage or the server: every category has type 'expense'|'income'.
+function normCats(list){
+  const out = (Array.isArray(list) ? list : []).filter(c => c && c.id && c.name).map(c => ({
+    id:String(c.id), name:String(c.name), type:(c.type || c.kind) === 'income' ? 'income' : 'expense',
+    icon:String(c.icon || '🏷️').replace(/[<>&"']/g, '').slice(0, 16) || '🏷️',
+    color:/^#[0-9a-f]{6}$/i.test(c.color || '') ? c.color : '#90A4AE',
+    limit:Math.max(0, Number(c.limit) || 0), ...(c.locked ? { locked:true } : {}) }));
+  if (!out.some(c => c.id === 'uncat')) out.push(clone(DEFAULT_CATEGORIES.find(c => c.id === 'uncat')));
+  return out;
+}
+/* ---- data source: SAMPLE_DATA + local entries (not configured) or the cloud store (configured) ---- */
+const syncCfg = () => store.get(CONFIG.STORAGE_KEYS.sync, null);
+const isRemote = () => { const c = syncCfg(); return !!(c && c.url && c.key); };
+let cache = store.get(CONFIG.STORAGE_KEYS.cache, null);      // { categories, transactions, updatedAt, syncedAt }
+let queue = store.get(CONFIG.STORAGE_KEYS.queue, []);        // offline queue: [{op:'addTx'|'delTx'|'putCats', ...}]
+let localCats = normCats(store.get(CONFIG.STORAGE_KEYS.categories, null) || DEFAULT_CATEGORIES);
+let categories = isRemote() && cache ? normCats(cache.categories) : localCats;
+let userTx = store.get(CONFIG.STORAGE_KEYS.userTx, []);
+function saveCats(){
+  if (isRemote()){ cache = Object.assign(cache || { transactions:[] }, { categories:clone(categories) }); store.set(CONFIG.STORAGE_KEYS.cache, cache);
+    enqueue({ op:'putCats', categories:clone(categories) }); }
+  else { localCats = categories; store.set(CONFIG.STORAGE_KEYS.categories, categories); }
+}
+function fallbackCat(type){ return type === 'income' && categories.some(c => c.id === 'other_income') ? 'other_income' : 'uncat'; }
 function catById(id){ return categories.find(c => c.id === id) || categories.find(c => c.id === 'uncat'); }
+function baseTx(){
+  if (!isRemote()) return SAMPLE_DATA.transactions.concat(userTx);
+  const dels = new Set(queue.filter(q => q.op === 'delTx').map(q => q.id));
+  const have = new Set(((cache && cache.transactions) || []).map(t => t.id));
+  return ((cache && cache.transactions) || []).concat(queue.filter(q => q.op === 'addTx' && !have.has(q.tx.id)).map(q => q.tx)).filter(t => !dels.has(t.id));
+}
 function allTx(){
   const ids = new Set(categories.map(c => c.id));
-  return SAMPLE_DATA.transactions.concat(userTx).map(t => {
-    const o = Object.assign({}, t); o._d = new Date(t.date);
-    if (!ids.has(o.categoryId)) o.categoryId = 'uncat'; // deleted categories fall back here
+  return baseTx().map(t => {
+    const o = Object.assign({}, t); o._d = new Date(t.date); o.amount = Number(o.amount) || 0;
+    if (!ids.has(o.categoryId)) o.categoryId = fallbackCat(o.type); // deleted categories fall back here
     return o;
   });
 }
@@ -458,9 +505,9 @@ function activityBars(r){
 }
 function txRow(t){
   const c = catById(t.categoryId), inc = t.type === 'income';
-  return `<div class="row"><span class="ico sq" style="--c:${c.color}">${c.icon}</span>
+  return `<button class="row" data-act="tx" data-id="${esc(t.id)}"><span class="ico sq" style="--c:${c.color}">${c.icon}</span>
     <span class="grow"><div class="name">${esc(t.note || c.name)}</div><div class="meta">${esc(c.name)} · ${fmtTime(t._d)}</div></span>
-    <span class="amt ${inc?'inc':''}">${inc?'+':''}${money(t.amount, true)}</span></div>`;
+    <span class="amt ${inc?'inc':''}">${inc?'+':''}${money(t.amount, true)}</span></button>`;
 }
 function groupedList(list){
   if (!list.length) return '<div class="list"><div class="empty">No transactions in this period.</div></div>';
@@ -479,7 +526,7 @@ function viewActivity(r, pr){
     ${groupedList(txIn(r))}`;
 }
 function viewBudget(r){
-  const exp = categories.filter(c => c.kind === 'expense');
+  const exp = categories.filter(c => c.type === 'expense');
   const withLimit = exp.filter(c => c.limit > 0);
   const spentBy = id => sum(txIn(r, 'expense').filter(t => t.categoryId === id));
   const totalLimit = withLimit.reduce((s, c) => s + prorate(c.limit), 0);
@@ -536,9 +583,9 @@ function viewAnalytics(r, pr){
   <div class="list">${biggest.length ? biggest.map(txRow).join('') : '<div class="empty">Nothing yet.</div>'}</div>`;
 }
 function viewCategories(){
-  const sec = kind => categories.filter(c => c.kind === kind).map(c => `
+  const sec = kind => categories.filter(c => c.type === kind).map(c => `
     <button class="row" data-act="editCat" data-id="${c.id}"><span class="ico ringed" style="--c:${c.color}">${c.icon}</span>
-      <span class="grow"><div class="name">${esc(c.name)}</div><div class="meta">${kind === 'expense' ? (c.limit ? money(c.limit) + ' / month' : 'No limit') : 'Income'}${c.locked ? ' · default' : ''}</div></span>
+      <span class="grow"><div class="name">${esc(c.name)}</div><div class="meta">${kind === 'expense' ? (c.limit ? money(c.limit) + ' / month' : 'No limit') : 'Income'}${c.locked ? ' · fallback' : ''}</div></span>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7483" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></button>`).join('');
   return `
   <div class="hero" style="text-align:left;margin:10px 4px 0"><div class="v" style="font-size:28px">Categories</div><div class="k">Tap one to rename, recolour, change its icon or set a monthly limit.</div></div>
@@ -556,7 +603,6 @@ function render(animate = true){
   $('plabel').textContent = label(S.period, r);
   $('next').disabled = r.end > new Date();
   $('periodbar').style.display = S.tab === 'categories' ? 'none' : '';
-  $('subtitle').textContent = { summary:'Summary', activity:'Activity', budget:'Budget', analytics:'Analytics', categories:'Settings' }[S.tab];
   const html = { summary:viewSummary, activity:viewActivity, budget:viewBudget, analytics:viewAnalytics, categories:viewCategories }[S.tab](r, pr);
   main.innerHTML = `<div class="view${animate ? '' : ' still'}">${html}</div>`;
   animateDashes(main);
@@ -584,35 +630,35 @@ function drill(id){
 }
 
 function catEditor(id){
-  const isNew = !id; const src = isNew ? { id:'c_' + Date.now().toString(36), name:'', icon:'📦', color:PALETTE[categories.length % PALETTE.length], limit:0, kind:'expense' } : catById(id);
+  const isNew = !id; const src = isNew ? { id:'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2,5), name:'', icon:'📦', color:PALETTE[categories.length % PALETTE.length], limit:0, type:'expense' } : catById(id);
   const c = clone(src); let armed = false;
   const draw = body => {
     body.innerHTML = `
       <div style="display:flex;justify-content:center;margin:4px 0 2px"><span class="ico ringed" id="cePrev" style="--c:${c.color};width:72px;height:72px;font-size:34px">${c.icon}</span></div>
       <label class="f" for="ceName">Name</label><input class="inp" id="ceName" maxlength="28" placeholder="e.g. Coffee" value="${esc(c.name)}" autocomplete="off">
-      ${isNew ? `<label class="f">Type</label><div class="seg" style="display:inline-flex"><button data-k="expense" class="${c.kind==='expense'?'on':''}">Expense</button><button data-k="income" class="${c.kind==='income'?'on':''}">Income</button></div>` : ''}
-      ${c.kind === 'expense' ? `<label class="f" for="ceLimit">Monthly budget limit (${CONFIG.CURRENCY_SYMBOL}) — 0 for none</label><input class="inp" id="ceLimit" type="number" inputmode="decimal" min="0" step="50" value="${c.limit || ''}" placeholder="0">` : ''}
+      ${isNew ? `<label class="f">Type</label><div class="seg" style="display:inline-flex"><button data-k="expense" class="${c.type==='expense'?'on':''}">Expense</button><button data-k="income" class="${c.type==='income'?'on':''}">Income</button></div>` : ''}
+      ${c.type === 'expense' ? `<label class="f" for="ceLimit">Monthly budget limit (${CONFIG.CURRENCY_SYMBOL}) — 0 for none</label><input class="inp" id="ceLimit" type="number" inputmode="decimal" min="0" step="50" value="${c.limit || ''}" placeholder="0">` : ''}
       <label class="f">Colour</label><div class="grid">${PALETTE.map(p => `<button class="sw ${p===c.color?'on':''}" data-col="${p}" style="background:${p}" aria-label="Colour ${p}"></button>`).join('')}</div>
       <label class="f">Icon</label><div class="grid">${EMOJIS.map(e => `<button data-emo="${e}" class="${e===c.icon?'on':''}">${e}</button>`).join('')}</div>
       <div class="btnrow"><button class="btn primary" id="ceSave">${isNew ? 'Create category' : 'Save changes'}</button></div>
       ${!isNew && !c.locked ? `<div class="btnrow"><button class="btn danger" id="ceDel">Delete category</button></div><div class="note">Its transactions will move to “Uncategorised”.</div>` : ''}`;
     const nameEl = body.querySelector('#ceName'); nameEl.oninput = () => c.name = nameEl.value;
     const limEl = body.querySelector('#ceLimit'); if (limEl) limEl.oninput = () => c.limit = Math.max(0, parseFloat(limEl.value) || 0);
-    body.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { c.kind = b.dataset.k; draw(body); });
+    body.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { c.type = b.dataset.k; draw(body); });
     body.querySelectorAll('[data-col]').forEach(b => b.onclick = () => { c.color = b.dataset.col; body.querySelectorAll('[data-col]').forEach(x => x.classList.toggle('on', x === b)); body.querySelector('#cePrev').style.setProperty('--c', c.color); });
     body.querySelectorAll('[data-emo]').forEach(b => b.onclick = () => { c.icon = b.dataset.emo; body.querySelectorAll('[data-emo]').forEach(x => x.classList.toggle('on', x === b)); body.querySelector('#cePrev').textContent = c.icon; });
     body.querySelector('#ceSave').onclick = () => {
       if (!c.name.trim()){ nameEl.focus(); toast('Give it a name'); return; }
-      c.name = c.name.trim(); if (c.kind !== 'expense') c.limit = 0;
-      if (isNew) categories.splice(categories.findIndex(x => x.id === 'uncat'), 0, c); else Object.assign(categories.find(x => x.id === c.id), c);
+      c.name = c.name.trim(); if (c.type !== 'expense') c.limit = 0;
+      if (isNew){ const at = categories.findIndex(x => x.id === fallbackCat(c.type)); categories.splice(at < 0 ? categories.length : at, 0, c); } else Object.assign(categories.find(x => x.id === c.id), c);
       saveCats(); TX = allTx(); closeSheet(); render(false); toast(isNew ? 'Category created' : 'Saved');
     };
     const del = body.querySelector('#ceDel');
     if (del) del.onclick = () => {
       if (!armed){ armed = true; del.classList.add('arm'); del.textContent = 'Tap again to delete'; setTimeout(() => { armed = false; del.classList.remove('arm'); del.textContent = 'Delete category'; }, 3000); return; }
       categories = categories.filter(x => x.id !== c.id);
-      userTx.forEach(t => { if (t.categoryId === c.id) t.categoryId = 'uncat'; }); store.set(CONFIG.STORAGE_KEYS.userTx, userTx);
-      saveCats(); TX = allTx(); closeSheet(); render(false); toast('Deleted · moved to Uncategorised');
+      if (!isRemote()){ userTx.forEach(t => { if (t.categoryId === c.id) t.categoryId = fallbackCat(c.type); }); store.set(CONFIG.STORAGE_KEYS.userTx, userTx); }
+      saveCats(); TX = allTx(); closeSheet(); render(false); toast('Deleted · moved to ' + catById(fallbackCat(c.type)).name);
     };
   };
   openSheet(isNew ? 'New category' : 'Edit category', '', draw);
@@ -622,7 +668,7 @@ function addSheet(){
   const now = new Date(), p = x => String(x).padStart(2,'0');
   const st = { type:'expense', cat:null };
   const draw = body => {
-    const cats = categories.filter(c => c.kind === st.type || c.id === 'uncat');
+    const cats = categories.filter(c => c.type === st.type);
     if (!cats.find(c => c.id === st.cat)) st.cat = cats[0] && cats[0].id;
     const keep = id => (body.querySelector('#' + id) || {}).value;
     const amt = keep('atAmt') || '', note = keep('atNote') || '', dt = keep('atDate') || `${now.getFullYear()}-${p(now.getMonth()+1)}-${p(now.getDate())}T${p(now.getHours())}:${p(now.getMinutes())}`;
@@ -633,18 +679,160 @@ function addSheet(){
       <label class="f" for="atNote">Note</label><input class="inp" id="atNote" maxlength="40" placeholder="e.g. Woolworths" value="${esc(note)}" autocomplete="off">
       <label class="f" for="atDate">Date &amp; time</label><input class="inp" id="atDate" type="datetime-local" value="${dt}">
       <div class="btnrow"><button class="btn primary" id="atSave">Add ${st.type}</button></div>
-      <div class="note">Placeholder entry form — saved on this device only.</div>`;
+      <div class="note">${isRemote() ? 'Saved to your Geld cloud store' + (navigator.onLine ? '' : ' when you are back online') + '.' : 'Sample mode — saved on this device only. Connect sync with the gear icon.'}</div>`;
     body.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { st.type = b.dataset.t; draw(body); });
     body.querySelectorAll('[data-c]').forEach(b => b.onclick = () => { st.cat = b.dataset.c; body.querySelectorAll('[data-c]').forEach(x => x.classList.toggle('on', x === b)); });
     body.querySelector('#atSave').onclick = () => {
       const v = parseFloat(String(body.querySelector('#atAmt').value).replace(/\s/g,'').replace(',', '.'));
       if (!(v > 0)){ body.querySelector('#atAmt').focus(); toast('Enter an amount'); return; }
       const d = body.querySelector('#atDate').value || dt;
-      userTx.push({ id:'u' + Date.now(), date:d.slice(0,16), amount:Math.round(v*100)/100, categoryId:st.cat || 'uncat', note:body.querySelector('#atNote').value.trim(), type:st.type });
-      store.set(CONFIG.STORAGE_KEYS.userTx, userTx); TX = allTx(); closeSheet(); render(false); toast('Added ' + money(v, true));
+      const tx = { id:'u' + Date.now().toString(36) + Math.random().toString(36).slice(2,6), date:d.slice(0,16), amount:Math.round(v*100)/100, categoryId:st.cat || fallbackCat(st.type), note:body.querySelector('#atNote').value.trim(), type:st.type };
+      if (isRemote()) enqueue({ op:'addTx', tx }); else { userTx.push(tx); store.set(CONFIG.STORAGE_KEYS.userTx, userTx); }
+      TX = allTx(); closeSheet(); render(false); toast('Added ' + money(v, true));
     };
   };
   openSheet('Add transaction', '', draw);
+}
+
+function txSheet(id){
+  const t = TX.find(x => x.id === id); if (!t) return;
+  const c = catById(t.categoryId), inc = t.type === 'income', canDel = isRemote() || userTx.some(u => u.id === id);
+  const pending = isRemote() && queue.some(q => q.op === 'addTx' && q.tx.id === id);
+  let armed = false;
+  openSheet(inc ? 'Income' : 'Expense', `
+    <div style="display:flex;align-items:center;gap:12px;margin:6px 0 10px"><span class="ico ringed" style="--c:${c.color};width:52px;height:52px;font-size:24px">${c.icon}</span>
+      <div><div class="amt ${inc?'inc':''}" style="font-size:28px;text-align:left">${inc?'+':''}${money(t.amount, true)}</div><div class="meta">${esc(c.name)}</div></div></div>
+    <div class="card" style="margin-top:0;padding:6px 14px">
+      <div class="kv"><span>Date</span><span>${WD[t._d.getDay()]}, ${t._d.getDate()} ${MONL[t._d.getMonth()]} ${t._d.getFullYear()} · ${fmtTime(t._d)}</span></div>
+      <div class="kv"><span>Note</span><span>${esc(t.note || '—')}</span></div>
+      ${pending ? '<div class="kv"><span>Status</span><span>Waiting to sync</span></div>' : ''}</div>
+    ${canDel ? '<div class="btnrow"><button class="btn danger" id="txDel">Delete transaction</button></div>' : '<div class="note">Sample transactions can’t be deleted. Connect sync to use your real data.</div>'}`,
+  body => { const del = body.querySelector('#txDel'); if (!del) return;
+    del.onclick = () => {
+      if (!armed){ armed = true; del.classList.add('arm'); del.textContent = 'Tap again to delete'; setTimeout(() => { armed = false; del.classList.remove('arm'); del.textContent = 'Delete transaction'; }, 3000); return; }
+      if (isRemote()){
+        const qi = queue.findIndex(q => q.op === 'addTx' && q.tx.id === id);
+        if (qi >= 0){ queue.splice(qi, 1); saveQueue(); } else enqueue({ op:'delTx', id });
+      } else { userTx = userTx.filter(u => u.id !== id); store.set(CONFIG.STORAGE_KEYS.userTx, userTx); }
+      TX = allTx(); closeSheet(); render(false); toast('Transaction deleted');
+    }; });
+}
+
+/* ============================ CLOUD SYNC ============================ */
+const SY = { busy:false, status:'', err:'', timer:null };
+function saveQueue(){ store.set(CONFIG.STORAGE_KEYS.queue, queue); }
+function enqueue(item){
+  if (item.op === 'putCats') queue = queue.filter(q => q.op !== 'putCats'); // only the latest full category list matters
+  queue.push(item); saveQueue(); updateSyncUI(); sync();
+}
+async function api(method, path, body){
+  const c = syncCfg();
+  const res = await fetch(c.url.replace(/\/+$/, '') + path, { method, cache:'no-store',
+    headers:Object.assign({ 'Authorization':'Bearer ' + c.key }, body ? { 'Content-Type':'application/json' } : {}),
+    body:body ? JSON.stringify(body) : undefined });
+  let data = null; try { data = await res.json(); } catch(e){}
+  if (!res.ok){ const e = new Error((data && data.error) || ('HTTP ' + res.status)); e.status = res.status; throw e; }
+  return data;
+}
+async function flushQueue(){
+  while (queue.length){
+    const q = queue[0];
+    try {
+      if (q.op === 'addTx') await api('POST', '/transactions', q.tx);
+      else if (q.op === 'delTx') await api('DELETE', '/transactions/' + encodeURIComponent(q.id));
+      else if (q.op === 'putCats') await api('PUT', '/categories', { categories:q.categories });
+    } catch(e){
+      if (e.status === 404 && q.op === 'delTx'){} // already gone
+      else if (e.status && e.status >= 400 && e.status < 500 && e.status !== 401 && e.status !== 408 && e.status !== 429){ console.warn('Geld: dropped rejected change', q.op, e.message); }
+      else throw e; // offline / auth / server error: keep the queue and retry later
+    }
+    queue.shift(); saveQueue();
+  }
+}
+async function sync(opts = {}){
+  if (!isRemote()) return;
+  if (SY.busy){ SY.again = true; return; }
+  SY.busy = true; SY.again = false; SY.err = ''; updateSyncUI();
+  try {
+    await flushQueue();
+    const st = await api('GET', '/state');
+    cache = { categories:st.categories || [], transactions:st.transactions || [], updatedAt:st.updatedAt || null, syncedAt:new Date().toISOString() };
+    store.set(CONFIG.STORAGE_KEYS.cache, cache);
+    categories = normCats(cache.categories); TX = allTx();
+    if (!$('sheet').classList.contains('open') || opts.force) render(false);
+    if (opts.toast) toast('Synced');
+  } catch(e){
+    SY.err = e.status === 401 ? 'Key rejected — check Settings' : (navigator.onLine === false || !e.status) ? 'Offline' : ('Sync error: ' + e.message);
+    if (opts.toast) toast(SY.err);
+  } finally {
+    SY.busy = false; updateSyncUI();
+    clearTimeout(SY.timer); if (queue.length && isRemote()) SY.timer = setTimeout(sync, 30000); // retry pending changes
+    if (opts.after) opts.after();
+    if (SY.again) setTimeout(sync, 0);
+  }
+}
+function ago(iso){
+  if (!iso) return 'never'; const d = new Date(iso), s = (Date.now() - d) / 1000;
+  if (s < 45) return 'just now'; if (s < 3600) return Math.round(s/60) + ' min ago';
+  const sameDay = sod(d).getTime() === sod(new Date()).getTime();
+  return (sameDay ? '' : `${d.getDate()} ${MON[d.getMonth()]} `) + fmtTime(d);
+}
+function updateSyncUI(){
+  const remote = isRemote(), sb = $('syncBtn'), sub = $('subtitle');
+  sb.hidden = !remote; sb.classList.toggle('spin', SY.busy);
+  if (!remote) sub.innerHTML = '<span class="samplebadge">Sample data</span>';
+  else {
+    const cls = SY.err ? (SY.err === 'Offline' ? 'warn' : 'err') : queue.length ? 'warn' : '';
+    const txt = SY.busy ? 'Syncing…' : SY.err ? SY.err : queue.length ? `${queue.length} pending` : 'Synced ' + ago(cache && cache.syncedAt);
+    sub.innerHTML = `<span class="syncdot ${cls}"></span>${esc(txt)}`;
+  }
+  const ss = document.getElementById('setStatus'); if (ss) ss.innerHTML = settingsStatus();
+}
+function settingsStatus(){
+  if (!isRemote()) return '<div class="kv"><span>Mode</span><span>Sample data (not connected)</span></div>';
+  return `<div class="kv"><span>Last synced</span><span>${cache && cache.syncedAt ? ago(cache.syncedAt) : 'never'}</span></div>
+    <div class="kv"><span>Server updated</span><span>${cache && cache.updatedAt ? ago(cache.updatedAt) : '—'}</span></div>
+    <div class="kv"><span>Pending changes</span><span>${queue.length}</span></div>
+    <div class="kv"><span>Status</span><span>${SY.busy ? 'Syncing…' : esc(SY.err || 'OK')}</span></div>`;
+}
+function settingsSheet(){
+  const c = syncCfg() || {};
+  openSheet('Sync settings', `
+    <div class="meta" style="white-space:normal;margin-top:2px">Connect Geld to your private cloud store so the app and your Back Tap shortcut share the same data.</div>
+    <label class="f" for="setUrl">API URL</label><input class="inp" id="setUrl" type="url" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" value="${esc(c.url || CONFIG.API_URL_DEFAULT)}">
+    <label class="f" for="setKey">Key</label><input class="inp" id="setKey" type="password" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" placeholder="${c.key ? 'Saved — leave blank to keep' : 'Your Geld passphrase'}">
+    <div class="btnrow"><button class="btn primary" id="setSave">${c.key ? 'Save & sync' : 'Connect'}</button></div>
+    <div class="stline" id="setMsg"></div>
+    <div class="card" style="padding:6px 14px" id="setStatus">${settingsStatus()}</div>
+    ${isRemote() ? '<div class="btnrow"><button class="btn" id="setSync">Sync now</button></div><div class="btnrow"><button class="btn danger" id="setOff">Disconnect (show sample data)</button></div>' : ''}
+    <div class="note">The key is stored only on this device. Data shown when not connected is synthetic sample data.</div>`,
+  body => {
+    const msg = body.querySelector('#setMsg');
+    body.querySelector('#setSave').onclick = async () => {
+      const url = body.querySelector('#setUrl').value.trim().replace(/\/+$/, ''), key = body.querySelector('#setKey').value.trim() || c.key;
+      if (!/^https?:\/\//.test(url)){ msg.textContent = 'Enter the full API URL (https://…)'; return; }
+      if (!key){ msg.textContent = 'Enter your key'; return; }
+      msg.textContent = 'Checking…';
+      try {
+        const r = await fetch(url + '/state', { headers:{ 'Authorization':'Bearer ' + key }, cache:'no-store' });
+        if (r.status === 401){ msg.textContent = 'That key was rejected.'; return; }
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+      } catch(e){ msg.textContent = 'Could not reach the API (' + e.message + ').'; return; }
+      const wasRemote = isRemote();
+      store.set(CONFIG.STORAGE_KEYS.sync, { url, key });
+      body.querySelector('#setKey').value = '';
+      if (!wasRemote){ queue = []; saveQueue(); cache = null; }
+      msg.textContent = 'Connected.';
+      sync({ force:true, after:() => { closeSheet(); toast('Connected · showing your data'); } });
+    };
+    const sn = body.querySelector('#setSync'); if (sn) sn.onclick = () => sync({ toast:true });
+    const off = body.querySelector('#setOff'); let armed = false;
+    if (off) off.onclick = () => {
+      if (!armed){ armed = true; off.classList.add('arm'); off.textContent = 'Tap again to disconnect'; setTimeout(() => { armed = false; off.classList.remove('arm'); off.textContent = 'Disconnect (show sample data)'; }, 3000); return; }
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.sync); localStorage.removeItem(CONFIG.STORAGE_KEYS.cache); queue = []; saveQueue(); cache = null;
+      categories = localCats; TX = allTx(); closeSheet(); render(false); updateSyncUI(); toast('Disconnected · sample data');
+    };
+  });
 }
 
 /* ============================ EVENTS ============================ */
@@ -653,6 +841,20 @@ $('prev').onclick = () => { S.anchor = shift(S.period, S.anchor, -1); render(); 
 $('next').onclick = () => { S.anchor = shift(S.period, S.anchor, 1); render(); };
 $('tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (b) go(b.dataset.tab); };
 $('fab').onclick = addSheet;
+$('gearBtn').onclick = settingsSheet;
+$('syncBtn').onclick = () => sync({ toast:true });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible'){ updateSyncUI(); sync(); } });
+window.addEventListener('online', () => sync());
+setInterval(updateSyncUI, 60000);
+// pull-to-refresh (when connected): pull down from the top of the content
+(() => { let y0 = null, dy = 0; const ptr = $('ptr');
+  main.addEventListener('touchstart', e => { y0 = (isRemote() && main.scrollTop <= 0) ? e.touches[0].clientY : null; dy = 0; }, { passive:true });
+  main.addEventListener('touchmove', e => { if (y0 === null) return; dy = Math.max(0, e.touches[0].clientY - y0);
+    const p = Math.min(dy, 110); ptr.style.transition = 'none'; ptr.style.opacity = Math.min(1, p/70); ptr.style.transform = `translate3d(0,${p*0.5 - 30}px,0) rotate(${p*3}deg)`; }, { passive:true });
+  main.addEventListener('touchend', () => { if (y0 === null) return; y0 = null; ptr.style.transition = 'transform .25s, opacity .25s';
+    if (dy > 75){ ptr.classList.add('go'); ptr.style.transform = 'translate3d(0,16px,0)'; sync({ toast:true, after:() => { ptr.classList.remove('go'); ptr.style.opacity = 0; ptr.style.transform = ''; } }); }
+    else { ptr.style.opacity = 0; ptr.style.transform = ''; } dy = 0; }, { passive:true });
+})();
 $('overlay').onclick = closeSheet; $('sheetClose').onclick = closeSheet;
 let resetArmed = false;
 document.addEventListener('click', e => {
@@ -661,6 +863,7 @@ document.addEventListener('click', e => {
   if (a === 'sumType'){ S.sumType = el.dataset.v; render(false); }
   else if (a === 'sort'){ S.sort = { amount:'count', count:'name', name:'amount' }[S.sort]; render(false); }
   else if (a === 'drill') drill(id);
+  else if (a === 'tx'){ if ($('sheet').classList.contains('open')){ closeSheet(); setTimeout(() => txSheet(id), 260); } else txSheet(id); }
   else if (a === 'editCat'){ if ($('sheet').classList.contains('open')){ closeSheet(); setTimeout(() => catEditor(id), 260); } else catEditor(id); }
   else if (a === 'newCat') catEditor(null);
   else if (a === 'resetCats'){
@@ -671,15 +874,17 @@ document.addEventListener('click', e => {
 // swipe left/right on the content to move between periods
 let sx = null, sy = null;
 main.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive:true });
-main.addEventListener('touchend', e => { if (sx === null || S.tab === 'categories') return; const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = null;
+main.addEventListener('touchend', e => { if (sx === null || S.tab === 'categories') return; if (!e.changedTouches.length) return; const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = null;
   if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.6){ if (dx > 0) $('prev').click(); else if (!$('next').disabled) $('next').click(); } }, { passive:true });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
-window.GeldApp = { S, render, go, drill, catEditor, addSheet, closeSheet, get categories(){ return categories; } };
-render();
+window.GeldApp = { S, render, go, drill, catEditor, addSheet, closeSheet, settingsSheet, txSheet, sync, isRemote, get categories(){ return categories; }, get queue(){ return queue; }, get tx(){ return TX; } };
+render(); updateSyncUI(); sync();
 </script>
 <script>
 /* Offline support: register the service worker (relative path so it works under /<repo>/ on GitHub Pages). */
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  const hadController = !!navigator.serviceWorker.controller; let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !reloaded){ reloaded = true; location.reload(); } });
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js', { scope: './' }).catch(e => console.warn('SW registration failed', e)));
 }
 </script>
