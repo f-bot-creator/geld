@@ -1,6 +1,6 @@
 /* Geld service worker — cache-first app shell.
    Bump CACHE_VERSION whenever you change any file so phones pick up the update. */
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const CACHE_NAME = 'geld-shell-' + CACHE_VERSION;
 const SHELL = [
   './',
